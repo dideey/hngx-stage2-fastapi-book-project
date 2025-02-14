@@ -1,0 +1,31 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main  # Run tests when a PR is opened to main
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest  # Use Ubuntu for consistency with deployment
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4  # Pulls the repository code
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'  # Adjust based on your project
+
+      - name: Create and Activate Virtual Environment
+        run: |
+          python -m venv venv  # Create venv
+          source venv/bin/activate  # Activate venv
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Install dependencies
+
+      - name: Run Tests
+        run: |
+          source venv/bin/activate  # Ensure venv is active
+          pytest --maxfail=1 --disable-warnings --tb=short
